@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.shoppinglist.R
 import com.example.shoppinglist.data.ShoppingListModel
+import com.example.shoppinglist.data.ShoppingListModelItem
 
 @Composable
 fun ShoppingListApp() {
@@ -40,7 +41,7 @@ fun ShoppingList(listUiState: ListUiState)
 
     @Composable
     fun ErrorScreen() {
-        Text("error!!!555666745")
+        Text("error!!!")
     }
     @Composable
     fun LoadingScreen() {
@@ -48,7 +49,7 @@ fun ShoppingList(listUiState: ListUiState)
     }
 
     @Composable
-    fun ResultScreen(ListItems : ShoppingListModel) {
+    fun ResultScreen(ListItems : List<ShoppingListModelItem>) {
         Row {
             Image (
                 painter = painterResource(id = R.drawable.image_part_001),

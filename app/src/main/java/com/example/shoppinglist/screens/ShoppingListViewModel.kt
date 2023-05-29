@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.data.ShoppingListModel
+import com.example.shoppinglist.data.ShoppingListModelItem
 import com.example.shoppinglist.network.ShoppingListApi
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -17,7 +18,7 @@ import java.io.IOException
  * UI state for the Home screen
  */
 sealed interface ListUiState {
-    data class Success(val shoppingListModel: ShoppingListModel) : ListUiState
+    data class Success(val shoppingListModel: List<ShoppingListModelItem>) : ListUiState
     object Error : ListUiState
     object Loading : ListUiState
 }
@@ -34,16 +35,13 @@ class ShoppingListViewModel: ViewModel() {
         viewModelScope.launch {
 
             listUiState = try {
-                var result: ShoppingListModel = ShoppingListApi.retrofitService.getList()
+                var result : List<ShoppingListModelItem> = ShoppingListApi.retrofitService.getList()
                 if (result.isNullOrEmpty()) {
                    Log.d(TAG,"üres")
-
-
                     ListUiState.Error
                 } else {
                     Log.d(TAG,"NEEM üres")
-                    ListUiState.Error
-                    // ListUiState.Success(result)
+                    ListUiState.Success(result)
                 }
             } catch (e: IOException) {
                 Log.e(TAG, "getList IO: ${e.message}")
