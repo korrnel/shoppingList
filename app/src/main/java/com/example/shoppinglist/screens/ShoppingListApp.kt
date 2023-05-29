@@ -1,8 +1,13 @@
 package com.example.shoppinglist.screens
 
+import android.app.LauncherActivity.ListItem
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,23 +54,23 @@ fun ShoppingList(listUiState: ListUiState)
     }
 
     @Composable
-    fun ResultScreen(ListItems : List<ShoppingListModelItem>) {
-        Row {
-            Image (
-                painter = painterResource(id = R.drawable.image_part_001),
-                "image",
-                modifier = Modifier
+    fun ResultScreen(listItems : List<ShoppingListModelItem>) {
+        LazyColumn {
+            items(listItems.size) {
+               Row() {
 
-                    .size(40.dp)
-                    .clip(CircleShape)
-            )
-            Spacer(modifier = Modifier.size(10.dp,0.dp))
-            Column {
-                Text(text = "Hello !!!!!!!!!${ListItems.size}")
-                Text("Gábriel!!!!!!!!!!4")
+                   Image (
+                        painter = painterResource(id = R.drawable.image_part_002),
+                        "image",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                    )
+                    Spacer(modifier = Modifier.size(10.dp,0.dp))
+
+                    Text("${listItems.get(it).name}")
+
+                }
             }
         }
-
-
-
 }
