@@ -27,27 +27,25 @@ class ShoppingListViewModel: ViewModel() {
     var listUiState: ListUiState by mutableStateOf(ListUiState.Loading)
         private set
 
+
     init {
         getList()
     }
 
     private fun getList() {
         viewModelScope.launch {
-
             listUiState = try {
                 var result : List<ShoppingListModelItem> = ShoppingListApi.retrofitService.getList()
                 if (result.isNullOrEmpty()) {
-                   Log.d(TAG,"üres")
                     ListUiState.Error
                 } else {
-                    Log.d(TAG,"NEEM üres")
                     ListUiState.Success(result)
                 }
             } catch (e: IOException) {
                 Log.e(TAG, "getList IO: ${e.message}")
                 ListUiState.Error
             } catch (e: HttpException) {
-                Log.e(TAG, "getList: ${e.message}")
+                Log.e(TAG, "getList HTTP: ${e.message}")
                 ListUiState.Error
             }
 

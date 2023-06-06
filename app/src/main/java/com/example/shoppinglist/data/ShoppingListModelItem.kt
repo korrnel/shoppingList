@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class ShoppingListModelItem(
     @SerialName("isActive")
     var isActive: Boolean,
-    val name: String,
+    var name: String,
     val price: Int,
     val quantity: Int
 )
