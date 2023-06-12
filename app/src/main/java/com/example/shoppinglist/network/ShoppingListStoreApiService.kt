@@ -1,6 +1,5 @@
 package com.example.shoppinglist.network
 
-import com.example.shoppinglist.data.ShoppingListModel
 import com.example.shoppinglist.data.ShoppingListModelItem
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -20,7 +19,7 @@ private val retrofit = Retrofit.Builder()
 interface ShoppingListStoreApiService
 {
    @GET("v1/68ee9eb3-98ca-4898-9b96-9c71a4d5b901")
-    suspend fun getList(): List<ShoppingListModelItem>
+   suspend fun getList(): List<ShoppingListModelItem>
 }
 
 /**

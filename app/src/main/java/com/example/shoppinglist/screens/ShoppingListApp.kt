@@ -3,46 +3,44 @@ package com.example.shoppinglist.screens
 import android.content.ContentValues
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.foundation.lazy.items
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.shoppinglist.R
 import com.example.shoppinglist.data.ShoppingListModelItem
-import com.example.shoppinglist.network.ShoppingListApi
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 
 
 @Composable
-fun ResultScreen(listItems : List<ShoppingListModelItem>) {
-    val checkedState = remember { mutableStateOf(true)  }
+fun ResultScreen(listItems: List<ShoppingListModelItem>,
+                 onItemToggle: (Item : ShoppingListModelItem?, Boolean) -> Unit,
+) {
+    LaunchedEffect(Unit) {
+        // on open...
+    }
+    //if (editingItemState.value != null) {
+        // todo Edit item
+   // }
+
 
     LazyColumn {
-        items(listItems.size) {
+        items(listItems) { item->
             Row(modifier = Modifier
                 .padding(5.dp)
                 .fillMaxWidth(),
             ) {
-                val i= it
                 Image (
                     painter = painterResource(id = R.drawable.image_part_002),
                     "image",
@@ -52,71 +50,48 @@ fun ResultScreen(listItems : List<ShoppingListModelItem>) {
                         .align(alignment = Alignment.CenterVertically)
                 )
                 Spacer(modifier = Modifier.size(10.dp,0.dp))
-
-                Text( modifier = Modifier.align(alignment = Alignment.CenterVertically),text="${listItems.get(it).name}")
-
-                TextField(value = listItems.get(it).name, onValueChange = { listItems.get(i).name = it } )
-
-
-
+                Text( modifier = Modifier.align(alignment = Alignment.CenterVertically),text="Name : ${item.name}")
                 Spacer(modifier = Modifier.weight(1f,true))
-
-                Switch(
-                    checked = listItems.get(it).isActive,
-                    onCheckedChange = {  },
+  /*              Switch(
+                    checked = listItems.get(i).isActive,
+                    onCheckedChange = {
+                        Log.d(TAG, "ResultScreen isActive:  " + listItems.get(i).isActive.toString());
+                        Log.d(TAG, "ResultScreen: It " + it.toString());
+                 //       listItems.get(i).isActive=!listItems.get(i).isActive
+                              },
                 )
-
+                IconButton(onClick = { editingItemState.value = listItems.get(it) }) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit")
+                }
+*/
             }
         }
     }
 }
 
 @Composable
-fun ShoppingListApp() {
-    val itemsState = remember { mutableStateOf<List<ShoppingListModelItem>>(emptyList()) }
-    val loadingState = remember { mutableStateOf(false) }
-    val errorMessageState = remember { mutableStateOf<String?>(null) }
-    val context = LocalContext.current
-    val editingItemState = remember { mutableStateOf<ShoppingListModelItem?>(null) }
+fun ShoppingListApp(viewModel: ShopplingListViewModel) {
+    val itemState = viewModel.itemsState.observeAsState()
+    val loadingState = viewModel.loadingState.observeAsState()
+    val errorMessageState = viewModel.errorMessageState.observeAsState()
     val scope = rememberCoroutineScope()
-
-    fun fetchItems() {
-        loadingState.value = true
-        itemsState.value = emptyList()
-        scope.launch {
-            try {
-                itemsState.value = ShoppingListApi.retrofitService.getList()
-                if (itemsState.value.isEmpty()) {
-                    errorMessageState.value = "No result, list truncated"
-                }
-            } catch (e: IOException) {
-                errorMessageState.value = e.message
-                Log.e(ContentValues.TAG, "getList IO: ${e.message}")
-
-            } catch (e: HttpException) {
-                errorMessageState.value = e.message
-                Log.e(ContentValues.TAG, "getList HTTP: ${e.message}")
-
-            } finally {
-                loadingState.value = false
-            }
-        }
-    }
 
 
     Surface(
         modifier = Modifier
             .fillMaxSize()
     ) {
-
-
         Column(modifier = Modifier.padding(16.dp)) {
             Row {
-                Button(onClick = { fetchItems() }) {
+                Button(onClick = {
+                    scope.launch {
+                            viewModel.fetchItems()
+                                  }
+                        }) {
                     Text(text = "Refresh")
                 }
                 Spacer(modifier = Modifier.width(16.dp))
-                if (loadingState.value) {
+                if (loadingState.value!!) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterVertically))
                 }
             }
@@ -125,7 +100,14 @@ fun ShoppingListApp() {
             if (errorMessageState.value != null) {
                 Text(text = errorMessageState.value!!)
             }
-            ResultScreen(itemsState.value)
+            ResultScreen(itemState.value.orEmpty(),
+                onItemToggle = { item, enabled ->
+                    Log.e(ContentValues.TAG, "on toogle")
+                //    val updatedItems = viewModel.itemsState.value.orEmpty().toMutableList()
+                 //   val updatedItem = item!!.copy(isActive = enabled)
+                 //   updatedItems.[updatedItems.indexOf(item)] = updatedItem
+                 //   viewModel.itemsState.value = updatedItems
+                },)
         }
 
 
