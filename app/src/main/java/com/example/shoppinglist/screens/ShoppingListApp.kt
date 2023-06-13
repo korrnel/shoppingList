@@ -13,19 +13,18 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-
+import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.shoppinglist.R
 import com.example.shoppinglist.data.ShoppingListModelItem
 import kotlinx.coroutines.launch
+
 
 
 @Composable
@@ -38,9 +37,10 @@ fun ResultScreen(listItems: List<ShoppingListModelItem>,
     }
     LazyColumn {
         items(listItems) { item->
+
             Row(modifier = Modifier
                 .padding(5.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
              ) {
                 Image (
                     painter = painterResource(id = R.drawable.image_part_002),
@@ -135,22 +135,18 @@ fun EditItemName(editingItemState: ShoppingListModelItem,
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Button(
-            onClick =  onCancelClick ,
-            modifier = Modifier.widthIn(64.dp)
-        ) {
-            Text(text = "X")
+        IconButton(onClick = { onCancelClick }) {
+            Icon(Icons.Default.Close, contentDescription = "Close")
         }
+
         TextField(value = text, onValueChange = { newText ->
                                                     text = newText } )
         Spacer(modifier = Modifier.width(8.dp))
 
-        Button(
-            onClick = { onSaveClick(text) },
-            modifier = Modifier.widthIn(64.dp)
-        ) {
-            Text(text = "Save")
+        IconButton(onClick = { onSaveClick(text) }) {
+            Icon(Icons.Default.Check, contentDescription = "Save")
         }
+
     }
 
 }
