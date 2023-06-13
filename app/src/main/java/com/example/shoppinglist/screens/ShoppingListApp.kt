@@ -1,6 +1,8 @@
 package com.example.shoppinglist.screens
 
-import android.content.ContentValues
+import android.content.ClipData
+import android.nfc.Tag
+import android.text.Editable
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -13,6 +15,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import com.example.shoppinglist.R
 import com.example.shoppinglist.data.ShoppingListModelItem
 import kotlinx.coroutines.launch
@@ -28,15 +33,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun ResultScreen(listItems: List<ShoppingListModelItem>,
                  onItemToggle: (Item : ShoppingListModelItem, Boolean) -> Unit,
-) {
+                 onItemEdit: (Item: ShoppingListModelItem) -> Unit
+                 ) {
     LaunchedEffect(Unit) {
         // on open...
     }
-    //if (editingItemState.value != null) {
-        // todo Edit item
-   // }
-
-
     LazyColumn {
         items(listItems) { item->
             Row(modifier = Modifier
@@ -56,11 +57,10 @@ fun ResultScreen(listItems: List<ShoppingListModelItem>,
                 ClickableText(text = AnnotatedString(item.name), modifier = Modifier.align(alignment = Alignment.CenterVertically), onClick = {onItemToggle(item, !item.isActive)})
                 Spacer(modifier = Modifier.weight(1f,true))
                 Switch(checked = item.isActive, onCheckedChange = { onItemToggle(item, it) })
-
-            /*  IconButton(onClick = { editingItemState.value = listItems.get(it) }) {
+                IconButton(onClick = { onItemEdit(item) }) {
                     Icon(Icons.Default.Edit, contentDescription = "Edit")
                 }
-*/
+
             }
         }
     }
@@ -71,6 +71,7 @@ fun ShoppingListApp(viewModel: ShopplingListViewModel) {
     val itemState = viewModel.itemsState.observeAsState()
     val loadingState = viewModel.loadingState.observeAsState()
     val errorMessageState = viewModel.errorMessageState.observeAsState()
+    val editingItemState = viewModel.editingItemState.observeAsState()
     val scope = rememberCoroutineScope()
 
 
@@ -97,16 +98,50 @@ fun ShoppingListApp(viewModel: ShopplingListViewModel) {
             if (errorMessageState.value != null) {
                 Text(text = errorMessageState.value!!)
             }
-            ResultScreen(itemState.value.orEmpty(),
+
+            if (editingItemState.value != null) {
+                // todo Edit item
+                Log.d("Edit is on", editingItemState.value.toString())
+                EditItemName(editingItemState.value!!, onCancelClick = viewModel.cancelEditingItem())
+
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ResultScreen(
+                itemState.value.orEmpty(),
                 onItemToggle = { item, enabled ->
                     val updatedItems = viewModel.itemsState.value.orEmpty().toMutableList()
                     val updatedItem = item.copy(isActive  = enabled)
                     updatedItems[updatedItems.indexOf(item)] = updatedItem
                     viewModel.itemsState.value = updatedItems
-                },)
+                },
+                onItemEdit = { item -> viewModel.setEditingItem(item) })
         }
 
 
     }
 
 }
+
+@Composable
+fun EditItemName(editingItemState: ShoppingListModelItem, onCancelClick: Unit) {
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextField(value = editingItemState.name, onValueChange = { null } )
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Button(
+            onClick = { onCancelClick },
+            modifier = Modifier.widthIn(64.dp)
+        ) {
+            Text(text = "Cancel")
+        }
+    }
+
+}
+
+

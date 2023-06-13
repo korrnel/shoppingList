@@ -16,6 +16,7 @@ class ShopplingListViewModel : ViewModel() {
     val itemsState = MutableLiveData<List<ShoppingListModelItem>>(emptyList())
     val loadingState = MutableLiveData(false)
     val errorMessageState = MutableLiveData<String?>(null)
+    val editingItemState = MutableLiveData<ShoppingListModelItem?>(null)
 
 suspend fun fetchItems() {
         loadingState.value = true
@@ -43,6 +44,23 @@ suspend fun fetchItems() {
                 loadingState.value = false
             }
         }
+
+    fun setEditingItem(item: ShoppingListModelItem) {
+        editingItemState.value = item
+    }
+
+    fun cancelEditingItem() {
+        editingItemState.value = null;
+    }
+
+    fun updateItemName(item: ShoppingListModelItem, text: String) {
+        val updatedItems = itemsState.value.orEmpty().toMutableList()
+        val updatedItem = item.copy(name = text)
+        updatedItems[updatedItems.indexOf(item)] = updatedItem
+        itemsState.value = updatedItems
+        editingItemState.value = null
+
+    }
 
 
 }
