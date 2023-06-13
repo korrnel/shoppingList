@@ -12,11 +12,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.ClickableText
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.example.shoppinglist.R
 import com.example.shoppinglist.data.ShoppingListModelItem
@@ -25,7 +27,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ResultScreen(listItems: List<ShoppingListModelItem>,
-                 onItemToggle: (Item : ShoppingListModelItem?, Boolean) -> Unit,
+                 onItemToggle: (Item : ShoppingListModelItem, Boolean) -> Unit,
 ) {
     LaunchedEffect(Unit) {
         // on open...
@@ -40,7 +42,7 @@ fun ResultScreen(listItems: List<ShoppingListModelItem>,
             Row(modifier = Modifier
                 .padding(5.dp)
                 .fillMaxWidth(),
-            ) {
+             ) {
                 Image (
                     painter = painterResource(id = R.drawable.image_part_002),
                     "image",
@@ -49,18 +51,13 @@ fun ResultScreen(listItems: List<ShoppingListModelItem>,
                         .clip(CircleShape)
                         .align(alignment = Alignment.CenterVertically)
                 )
+
                 Spacer(modifier = Modifier.size(10.dp,0.dp))
-                Text( modifier = Modifier.align(alignment = Alignment.CenterVertically),text="Name : ${item.name}")
+                ClickableText(text = AnnotatedString(item.name), modifier = Modifier.align(alignment = Alignment.CenterVertically), onClick = {onItemToggle(item, !item.isActive)})
                 Spacer(modifier = Modifier.weight(1f,true))
-  /*              Switch(
-                    checked = listItems.get(i).isActive,
-                    onCheckedChange = {
-                        Log.d(TAG, "ResultScreen isActive:  " + listItems.get(i).isActive.toString());
-                        Log.d(TAG, "ResultScreen: It " + it.toString());
-                 //       listItems.get(i).isActive=!listItems.get(i).isActive
-                              },
-                )
-                IconButton(onClick = { editingItemState.value = listItems.get(it) }) {
+                Switch(checked = item.isActive, onCheckedChange = { onItemToggle(item, it) })
+
+            /*  IconButton(onClick = { editingItemState.value = listItems.get(it) }) {
                     Icon(Icons.Default.Edit, contentDescription = "Edit")
                 }
 */
@@ -102,11 +99,10 @@ fun ShoppingListApp(viewModel: ShopplingListViewModel) {
             }
             ResultScreen(itemState.value.orEmpty(),
                 onItemToggle = { item, enabled ->
-                    Log.e(ContentValues.TAG, "on toogle")
-                //    val updatedItems = viewModel.itemsState.value.orEmpty().toMutableList()
-                 //   val updatedItem = item!!.copy(isActive = enabled)
-                 //   updatedItems.[updatedItems.indexOf(item)] = updatedItem
-                 //   viewModel.itemsState.value = updatedItems
+                    val updatedItems = viewModel.itemsState.value.orEmpty().toMutableList()
+                    val updatedItem = item.copy(isActive  = enabled)
+                    updatedItems[updatedItems.indexOf(item)] = updatedItem
+                    viewModel.itemsState.value = updatedItems
                 },)
         }
 

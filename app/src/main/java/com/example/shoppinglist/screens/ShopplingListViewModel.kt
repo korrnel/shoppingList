@@ -39,6 +39,7 @@ suspend fun fetchItems() {
                 Log.e(ContentValues.TAG, "getList : ${e.message}")
 
             } finally {
+                errorMessageState.value= null
                 loadingState.value = false
             }
         }
