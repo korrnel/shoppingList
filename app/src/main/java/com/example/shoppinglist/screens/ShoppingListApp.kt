@@ -1,8 +1,5 @@
 package com.example.shoppinglist.screens
 
-import android.content.ClipData
-import android.nfc.Tag
-import android.text.Editable
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -23,8 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import com.example.shoppinglist.R
 import com.example.shoppinglist.data.ShoppingListModelItem
 import kotlinx.coroutines.launch
@@ -99,10 +97,13 @@ fun ShoppingListApp(viewModel: ShopplingListViewModel) {
                 Text(text = errorMessageState.value!!)
             }
 
+            Log.d("Edit is what? ", editingItemState.value.toString())
             if (editingItemState.value != null) {
                 // todo Edit item
                 Log.d("Edit is on", editingItemState.value.toString())
-                EditItemName(editingItemState.value!!, onCancelClick = viewModel.cancelEditingItem())
+                EditItemName(editingItemState.value!!,
+                    onSaveClick = { viewModel.updateItemName(editingItemState.value!!, it.text) },
+                    onCancelClick = { viewModel.cancelEditingItem() })
 
             }
 
@@ -125,20 +126,30 @@ fun ShoppingListApp(viewModel: ShopplingListViewModel) {
 }
 
 @Composable
-fun EditItemName(editingItemState: ShoppingListModelItem, onCancelClick: Unit) {
+fun EditItemName(editingItemState: ShoppingListModelItem,
+                 onSaveClick : (TextFieldValue) -> Unit,
+                 onCancelClick: () -> Unit) {
+    var text by remember { mutableStateOf(TextFieldValue(editingItemState.name)) }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TextField(value = editingItemState.name, onValueChange = { null } )
+        Button(
+            onClick =  onCancelClick ,
+            modifier = Modifier.widthIn(64.dp)
+        ) {
+            Text(text = "X")
+        }
+        TextField(value = text, onValueChange = { newText ->
+                                                    text = newText } )
         Spacer(modifier = Modifier.width(8.dp))
 
         Button(
-            onClick = { onCancelClick },
+            onClick = { onSaveClick(text) },
             modifier = Modifier.widthIn(64.dp)
         ) {
-            Text(text = "Cancel")
+            Text(text = "Save")
         }
     }
 

@@ -2,6 +2,7 @@ package com.example.shoppinglist.screens
 
 import android.content.ContentValues
 import android.util.Log
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
@@ -51,6 +52,7 @@ suspend fun fetchItems() {
 
     fun cancelEditingItem() {
         editingItemState.value = null;
+        Log.d("cancel", "")
     }
 
     fun updateItemName(item: ShoppingListModelItem, text: String) {
