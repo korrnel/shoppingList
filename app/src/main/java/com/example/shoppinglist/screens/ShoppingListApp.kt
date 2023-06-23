@@ -87,6 +87,8 @@ fun ShoppingListApp(viewModel: ShopplingListViewModel) {
                     Text(text = "Refresh")
                 }
                 Spacer(modifier = Modifier.width(16.dp))
+
+
                 if (loadingState.value!!) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterVertically))
                 }

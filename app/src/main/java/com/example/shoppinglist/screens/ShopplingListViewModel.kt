@@ -2,12 +2,15 @@ package com.example.shoppinglist.screens
 
 import android.content.ContentValues
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 import com.example.shoppinglist.data.ShoppingListModelItem
 import com.example.shoppinglist.network.ShoppingListApi
+import com.google.gson.Gson
 
 import retrofit2.HttpException
 import java.io.IOException
@@ -18,6 +21,13 @@ class ShopplingListViewModel : ViewModel() {
     val loadingState = MutableLiveData(false)
     val errorMessageState = MutableLiveData<String?>(null)
     val editingItemState = MutableLiveData<ShoppingListModelItem?>(null)
+
+    init {
+        //
+    }
+
+
+
 
 suspend fun fetchItems() {
         loadingState.value = true
