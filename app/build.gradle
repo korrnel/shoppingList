@@ -1,16 +1,17 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.10'
 
 }
 
 android {
-    namespace 'com.example.shoppinglist'
+    namespace 'com.example.shoppingList'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.shoppinglist"
+        applicationId "com.example.shoppingList"
         minSdk 30
         targetSdk 33
         versionCode 1
@@ -87,4 +88,16 @@ dependencies {
                 because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
             }
         }
+    implementation 'androidx.compose.foundation:foundation:1.4.3'
+
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:32.1.1')
+
+
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
+
+    // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
 }

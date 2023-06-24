@@ -1,17 +1,11 @@
-package com.example.shoppinglist.screens
+package com.example.shoppingList.screens
 
 import android.content.ContentValues
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-
-import com.example.shoppinglist.data.ShoppingListModelItem
-import com.example.shoppinglist.network.ShoppingListApi
-import com.google.gson.Gson
-
+import com.example.shoppingList.data.ShoppingListModelItem
+import com.example.shoppingList.network.ShoppingListApi
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -21,7 +15,6 @@ class ShopplingListViewModel : ViewModel() {
     val loadingState = MutableLiveData(false)
     val errorMessageState = MutableLiveData<String?>(null)
     val editingItemState = MutableLiveData<ShoppingListModelItem?>(null)
-
     init {
         //
     }
@@ -58,19 +51,34 @@ suspend fun fetchItems() {
 
     fun setEditingItem(item: ShoppingListModelItem) {
         editingItemState.value = item
+        Log.d("EditingItem","set")
     }
 
     fun cancelEditingItem() {
         editingItemState.value = null;
-        Log.d("cancel", "")
+        Log.d("EditingItem","cancel")
     }
-
+    fun clearList()
+    {
+        itemsState.value= emptyList()
+    }
     fun updateItemName(item: ShoppingListModelItem, text: String) {
         val updatedItems = itemsState.value.orEmpty().toMutableList()
         val updatedItem = item.copy(name = text)
-        updatedItems[updatedItems.indexOf(item)] = updatedItem
+         try {
+             updatedItems[updatedItems.indexOf(item)] = updatedItem
+         } // new item
+          catch (e : ArrayIndexOutOfBoundsException) {
+             updatedItems.add(updatedItem)
+         }
         itemsState.value = updatedItems
         editingItemState.value = null
+        Log.d("EditingItem","saved")
+    }
+    fun removeItem(item: ShoppingListModelItem) {
+        val updatedItems = itemsState.value.orEmpty().toMutableList()
+        updatedItems.remove(item)
+        itemsState.value = updatedItems
 
     }
 

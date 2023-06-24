@@ -1,6 +1,6 @@
-package com.example.shoppinglist.network
+package com.example.shoppingList.network
 
-import com.example.shoppinglist.data.ShoppingListModelItem
+import com.example.shoppingList.data.ShoppingListModelItem
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json

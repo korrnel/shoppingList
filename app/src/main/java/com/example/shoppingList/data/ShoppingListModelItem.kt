@@ -1,4 +1,4 @@
-package com.example.shoppinglist.data
+package com.example.shoppingList.data
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

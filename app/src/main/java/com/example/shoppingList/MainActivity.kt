@@ -1,17 +1,14 @@
-package com.example.shoppinglist
+package com.example.shoppingList
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.ui.platform.LocalContext
-import com.example.shoppinglist.data.ShoppingListModelItem
-import com.example.shoppinglist.screens.ShoppingListApp
-import com.example.shoppinglist.screens.ShopplingListViewModel
-import com.example.shoppinglist.ui.theme.ShoppingListTheme
+import com.example.shoppingList.data.ShoppingListModelItem
+import com.example.shoppingList.screens.ShoppingListApp
+import com.example.shoppingList.screens.ShopplingListViewModel
+import com.example.shoppingList.ui.theme.ShoppingListTheme
 import com.google.gson.Gson
 
 
