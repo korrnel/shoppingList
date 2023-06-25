@@ -1,8 +1,7 @@
 package com.example.shoppingList.screens
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,13 +15,59 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.shoppingList.data.ShoppingListModelItem
 import kotlinx.coroutines.launch
 
+@Preview
+@Composable
+fun TopButtons()
+{
+    val XX = ShopplingListViewModel()
+    TopButtons(viewModel = XX)
+}
+@Composable
+fun TopButtons(viewModel: ShopplingListViewModel) {
+    val scope = rememberCoroutineScope()
+    val loadingState = viewModel.loadingState.observeAsState()
 
+    Row {
+
+        Button(onClick = {
+            scope.launch {
+                viewModel.clearList()
+            }
+        }) {
+            Text(text = "Clear")
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Button(onClick = {
+            scope.launch {
+                viewModel.fetchItems()
+            }
+        }) {
+            Text(text = "Refresh")
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Button(onClick = {
+            scope.launch {
+                viewModel.editingItemState.value= ShoppingListModelItem(true,"",0,0)
+            }
+        }) {
+            Text(text = "Add")
+        }
+        if (loadingState.value!!) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterVertically))
+        }
+    }
+}
 
 
 @Composable
@@ -74,92 +119,24 @@ fun ResultScreen(listItems: List<ShoppingListModelItem>,
     }
 }
 
-@Composable
-fun ShoppingListApp(viewModel: ShopplingListViewModel) {
-    val itemState = viewModel.itemsState.observeAsState()
-    val loadingState = viewModel.loadingState.observeAsState()
-    val errorMessageState = viewModel.errorMessageState.observeAsState()
-    val editingItemState = viewModel.editingItemState.observeAsState()
-
-    val scope = rememberCoroutineScope()
-
-
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row {
-                Button(onClick = {
-                    scope.launch {
-                        viewModel.clearList()
-                    }
-                }) {
-                    Text(text = "Clear")
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Button(onClick = {
-                    scope.launch {
-                            viewModel.fetchItems()
-                                  }
-                        }) {
-                    Text(text = "Refresh")
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Button(onClick = {
-                    scope.launch {
-                        viewModel.editingItemState.value= ShoppingListModelItem(true,"New",0,0)
-                    }
-                }) {
-                    Text(text = "Add")
-                }
-                if (loadingState.value!!) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterVertically))
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (errorMessageState.value != null) {
-                Text(text = errorMessageState.value!!)
-            }
-
-            Log.d("Edit is what? ", editingItemState.value.toString())
-            if (editingItemState.value != null) {
-                Log.d("Edit is on", editingItemState.value.toString())
-                EditItemName(editingItemState.value!!,
-                    onSaveClick = { viewModel.updateItemName(editingItemState.value!!, it.text) },
-                    onCancelClick = { viewModel.cancelEditingItem() })
-                BackHandler(true) { viewModel.cancelEditingItem() }
-
-            } else {
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ResultScreen(
-                itemState.value.orEmpty(),
-                onItemToggle = { item, enabled ->
-                    val updatedItems = viewModel.itemsState.value.orEmpty().toMutableList()
-                    val updatedItem = item.copy(isActive  = enabled)
-                    updatedItems[updatedItems.indexOf(item)] = updatedItem
-                    viewModel.itemsState.value = updatedItems
-                },
-                onItemEdit = { item -> viewModel.setEditingItem(item) },
-                onItemRemove = {item -> viewModel.removeItem(item) })
-            }
-        }
-
-
-    }
-
-}
-
 
 @Composable
 fun EditItemName(editingItemState: ShoppingListModelItem,
                  onSaveClick : (TextFieldValue) -> Unit,
                  onCancelClick: () -> Unit) {
     var text by remember { mutableStateOf(TextFieldValue(editingItemState.name)) }
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
+    DisposableEffect(Unit) {
+        // Set focus on TextField when the screen opens
+        focusRequester.requestFocus()
+
+        // Release focus when the screen is no longer active
+        onDispose {
+            focusManager.clearFocus()
+        }
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -168,9 +145,14 @@ fun EditItemName(editingItemState: ShoppingListModelItem,
         IconButton(onClick = { onCancelClick() }) {
             Icon(Icons.Default.Close, contentDescription = "Close")
         }
+        TextField(
+            value = text
+            , onValueChange = { newText ->
+                text = newText }  , modifier = Modifier
+                .focusable(true)
+                .focusRequester(focusRequester)
 
-        TextField(value = text, onValueChange = { newText ->
-                                                    text = newText } )
+        )
         Spacer(modifier = Modifier.width(8.dp))
 
         IconButton(onClick = { onSaveClick(text) }) {
@@ -180,5 +162,6 @@ fun EditItemName(editingItemState: ShoppingListModelItem,
     }
 
 }
+
 
 
