@@ -1,5 +1,6 @@
 package com.example.shoppingList
 
+import android.content.ContentValues.TAG
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -44,7 +45,7 @@ class MainActivity : ComponentActivity() {
         val itemListJson = Gson().toJson(viewModel.itemsState.value)
         val editor = sharedPreferences.edit()
         editor.putString("ShoppingL", itemListJson)
-        Log.d("Hee", "saved")
+        Log.d(TAG, "saved")
         editor.apply()
     }
 }

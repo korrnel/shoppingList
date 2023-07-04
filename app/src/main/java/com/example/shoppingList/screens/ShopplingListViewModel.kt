@@ -1,6 +1,6 @@
 package com.example.shoppingList.screens
 
-import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,14 +34,14 @@ suspend fun fetchItems() {
                 }
             } catch (e: IOException) {
                 errorMessageState.value = e.message
-                Log.e(ContentValues.TAG, "getList IO: ${e.message}")
+                Log.e(TAG, "getList IO: ${e.message}")
 
             } catch (e: HttpException) {
                 errorMessageState.value = e.message
-                Log.e(ContentValues.TAG, "getList HTTP: ${e.message}")
+                Log.e(TAG, "getList HTTP: ${e.message}")
             } catch (e: Exception) {
                 errorMessageState.value = e.message
-                Log.e(ContentValues.TAG, "getList : ${e.message}")
+                Log.e(TAG, "getList : ${e.message}")
 
             } finally {
                 errorMessageState.value= null
@@ -51,12 +51,12 @@ suspend fun fetchItems() {
 
     fun setEditingItem(item: ShoppingListModelItem) {
         editingItemState.value = item
-        Log.d("EditingItem","set")
+        Log.d(TAG,"set")
     }
 
     fun cancelEditingItem() {
         editingItemState.value = null;
-        Log.d("EditingItem","cancel")
+        Log.d(TAG,"cancel")
     }
     fun clearList()
     {
@@ -73,7 +73,7 @@ suspend fun fetchItems() {
          }
         itemsState.value = updatedItems
         editingItemState.value = null
-        Log.d("EditingItem","saved")
+        Log.d(TAG,"saved")
     }
     fun removeItem(item: ShoppingListModelItem) {
         val updatedItems = itemsState.value.orEmpty().toMutableList()
