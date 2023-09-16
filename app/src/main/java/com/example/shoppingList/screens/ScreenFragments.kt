@@ -39,7 +39,7 @@ fun TopButtons(viewModel: ShopplingListViewModel) {
 
     Row {
 
-        Button(onClick = {
+        /* Button(onClick = {
             scope.launch {
                 viewModel.clearList()
             }
@@ -50,15 +50,16 @@ fun TopButtons(viewModel: ShopplingListViewModel) {
 
         Button(onClick = {
             scope.launch {
-                viewModel.fetchItems()
+               viewModel.fetchItems()
             }
         }) {
             Text(text = "Refresh")
         }
         Spacer(modifier = Modifier.width(16.dp))
+        */
         Button(onClick = {
             scope.launch {
-                viewModel.editingItemState.value= ShoppingListModelItem(true,"",0,0)
+                 viewModel.editingItemState.value= ShoppingListModelItem(true,"",0,0)
             }
         }) {
             Text(text = "Add")
