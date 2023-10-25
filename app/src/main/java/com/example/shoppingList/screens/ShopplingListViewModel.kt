@@ -13,6 +13,8 @@ class ShopplingListViewModel : ViewModel() {
 
     val itemsState = MutableLiveData<List<ShoppingListModelItem>>(emptyList())
     val loadingState = MutableLiveData(false)
+    val clearConfirmationState = MutableLiveData(false)
+
     val errorMessageState = MutableLiveData<String?>(null)
     val editingItemState = MutableLiveData<ShoppingListModelItem?>(null)
     init {
@@ -55,7 +57,7 @@ suspend fun fetchItems() {
     }
 
     fun cancelEditingItem() {
-        editingItemState.value = null;
+        editingItemState.value = null
         Log.d(TAG,"cancel")
     }
     fun clearList()

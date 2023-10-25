@@ -36,18 +36,17 @@ fun TopButtons()
 fun TopButtons(viewModel: ShopplingListViewModel) {
     val scope = rememberCoroutineScope()
     val loadingState = viewModel.loadingState.observeAsState()
-
     Row {
 
-        /* Button(onClick = {
+         Button(onClick = {
             scope.launch {
-                viewModel.clearList()
+              viewModel.clearConfirmationState.setValue(true)
             }
         }) {
             Text(text = "Clear")
         }
         Spacer(modifier = Modifier.width(16.dp))
-
+/*
         Button(onClick = {
             scope.launch {
                viewModel.fetchItems()
@@ -120,7 +119,35 @@ fun ResultScreen(listItems: List<ShoppingListModelItem>,
     }
 }
 
-
+@Composable
+fun ConfirmDialog (
+    onDismiss: (() -> Unit)?,
+    onConfirm: () -> Unit
+){
+    AlertDialog(
+        onDismissRequest = { onDismiss },
+        title = { Text(text = "Confirmation") },
+        text = { Text(text = "Are you sure you want to perform this action?") },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(text = "Yes")
+            }
+        },
+        dismissButton = {
+            onDismiss?.let {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text(text = "No")
+                }
+            }
+        }
+    )
+}
 @Composable
 fun EditItemName(editingItemState: ShoppingListModelItem,
                  onSaveClick : (TextFieldValue) -> Unit,

@@ -14,7 +14,7 @@ fun ShoppingListApp(viewModel: ShopplingListViewModel) {
         val itemState = viewModel.itemsState.observeAsState()
         val errorMessageState = viewModel.errorMessageState.observeAsState()
         val editingItemState = viewModel.editingItemState.observeAsState()
-
+        val showClearConfirmation = viewModel.clearConfirmationState.observeAsState()
 
         Surface(
             modifier = Modifier
@@ -29,7 +29,18 @@ fun ShoppingListApp(viewModel: ShopplingListViewModel) {
                     Text(text = errorMessageState.value!!)
                 }
 
-                if (editingItemState.value != null) {
+                if (showClearConfirmation.value==true)
+                {
+                    ConfirmDialog(onDismiss = {
+                         viewModel.clearConfirmationState.setValue(false)
+                        },
+                        onConfirm = {
+                             viewModel.clearList()
+                             viewModel.clearConfirmationState.setValue(false)
+
+                        } )
+                }
+                 else if (editingItemState.value != null) {
                     EditItemName(editingItemState.value!!,
                         onSaveClick = { if (it.text.trim().isNotEmpty()) viewModel.updateItemName(editingItemState.value!!, it.text) },
                         onCancelClick = { viewModel.cancelEditingItem() })
