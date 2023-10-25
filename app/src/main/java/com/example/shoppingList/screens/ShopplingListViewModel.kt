@@ -70,7 +70,7 @@ suspend fun fetchItems() {
          try {
              updatedItems[updatedItems.indexOf(item)] = updatedItem
          } // new item
-          catch (e : ArrayIndexOutOfBoundsException) {
+          catch (e : IndexOutOfBoundsException) {
              updatedItems.add(updatedItem)
          }
         itemsState.value = updatedItems
